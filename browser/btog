@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
-
 # 
 # Description:
 # 
@@ -20,31 +18,34 @@ set -euo pipefail
 #   ff, ffd, chrome
 # 
 
-x=${1:-}
+input=${1:-}
 ff="firefox.desktop"
 ffd="firefox-developer.desktop"
 chrome="google-chrome.desktop"
 
-curr=$(xdg-settings get default-web-browser)
+# commands
+
+set_cmd="xdg-settings set default-web-browser"
+confirm_cmd="xdg-settings check default-web-browser"
 
 # functions
 
 set() {
-    y="${1}"
-    cmd=$(xdg-settings set default-web-browser "${y}")
+    x="${1}"
+    cmd=$(${set_cmd} "${x}")
 
     echo
-    echo "Setting default browser to ${y}.."
+    echo "Setting default browser to ${x}.."
 
     if [[ ${cmd} ]]; then
         echo
-        echo "Default browser set to ${y}."
+        echo "Default browser set to ${x}."
     fi
 }
 
 confirm() {
-    z="${1}"
-    cmd=$(xdg-settings check default-web-browser "${z}")
+    x="${1}"
+    cmd=$(${confirm_cmd} "${x}")
 
     if [[ ${cmd} = "yes" ]]; then
         echo
@@ -58,17 +59,17 @@ confirm() {
 }
 
 # OG Firefox
-if [[ ${x} = "ff" ]]; then
+if [[ ${input} = "ff" ]]; then
     set ${ff}
     confirm ${ff}
 
 # Firefox Developer Edition
-elif [[ ${x} = "ffd" ]]; then
+elif [[ ${input} = "ffd" ]]; then
     set ${ffd}
     confirm ${ffd}
 
 # Google Chrome
-elif [[ ${x} = "chrome" ]]; then
+elif [[ ${input} = "chrome" ]]; then
     set ${chrome}
     confirm ${chrome}
 else
