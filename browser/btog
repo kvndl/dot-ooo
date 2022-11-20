@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# 
+# Description:
+# 
+#   Modifies default browser via `xdg-settings`
+# 
+# Depends:
+# 
+#   xdg-settings
+# 
+# Usage:
+# 
+#   ./btog {input}
+# 
+# Available {input}s:
+# 
+#   ff, ffd, chrome
+# 
+
+x=${1:-}
+ff="firefox.desktop"
+ffd="firefox-developer.desktop"
+chrome="google-chrome.desktop"
+
+curr=$(xdg-settings get default-web-browser)
+
+# functions
+
+set() {
+    y="${1}"
+    cmd=$(xdg-settings set default-web-browser "${y}")
+
+    echo
+    echo "Setting default browser to ${y}.."
+
+    if [[ ${cmd} ]]; then
+        echo
+        echo "Default browser set to ${y}."
+    fi
+}
+
+confirm() {
+    z="${1}"
+    cmd=$(xdg-settings check default-web-browser "${z}")
+
+    if [[ ${cmd} = "yes" ]]; then
+        echo
+        echo "Done!"
+    else
+        echo
+        echo "Property setting has failed."
+        echo
+        echo "Exiting!"; exit 0
+    fi
+}
+
+# OG Firefox
+if [[ ${x} = "ff" ]]; then
+    set ${ff}
+    confirm ${ff}
+
+# Firefox Developer Edition
+elif [[ ${x} = "ffd" ]]; then
+    set ${ffd}
+    confirm ${ffd}
+
+# Google Chrome
+elif [[ ${x} = "chrome" ]]; then
+    set ${chrome}
+    confirm ${chrome}
+else
+    echo
+    echo "No valid input!"
+    echo
+    echo "Exiting.."; exit 0
+fi
